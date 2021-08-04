@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Random Wikipedia Summary</title>
+</head>
+<body>
+    <select id="localeSelect">
+        <option value="en" selected>English</option>
+        <option value="ja">日本語</option>
+        <option value="es">Español</option>
+        <option value="de">Deutsch</option>
+        <option value="ru">Русский</option>
+        <option value="fr">Français</option>
+        <option value="zh">中文</option>
+        <option value="it">Italiano</option>
+        <option value="pt">Português</option>
+        <option value="pl">Polski</option>
+    </select>
+    <button onclick="randomQuery()">Get random wikipedia summary</button>
+    <div id="summary"></div>
+    <div id="link"></div>
+<script>
+    async function randomQuery() {
+        let locale = document.getElementById("localeSelect").value;
+        let apiURL = 'https://' + locale + '.wikipedia.org/w/api.php?action=query&format=json&origin=*&prop=extracts&list=random&generator=random&redirects=1&utf8=1&exintro=10&explaintext=1&exsectionformat=wiki&rnnamespace=0&rnlimit=2&grnnamespace=0&grnfilterredir=nonredirects&grnlimit=1'
+        const article = await fetch(apiURL);
+        const data = await article.json();
+        const articleNr = Object.getOwnPropertyNames(data.query.pages);
+        const articleTitle = data.query.pages[articleNr].title;
+        const articleExtract = data.query.pages[articleNr].extract;
+        const articleTitleClean = articleTitle.replace(/ /g,"_");
+        const articleURL = locale + '.wikipedia.org/wiki/' + articleTitleClean;
+        document.getElementById("summary").innerHTML = '<h1>' + articleTitle + '</h1><p>' + articleExtract + '</p>';
+        document.getElementById("link").innerHTML = '<a href="https://' + articleURL + '" target="_blank"> more ... </a>';
+    }
+</script>
+</body>
+</html>
